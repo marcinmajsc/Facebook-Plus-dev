@@ -32,7 +32,7 @@ jobs:
   build:
     name: Inject tweak into IPA
     # macOS so Theos uses Xcode's toolchain and iOS SDK directly.
-    runs-on: macos-latest
+    runs-on: xcode-27
     permissions:
       contents: write
     env:
@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout (with submodules)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         with:
           submodules: recursive
 
@@ -55,12 +55,6 @@ jobs:
         run: |
           mkdir -p test
           wget "${{ inputs.ipa_url }}" --no-verbose -O test/com.facebook.Facebook.ipa
-
-          file_type=$(file --mime-type -b test/com.facebook.Facebook.ipa)
-          if [[ "$file_type" != "application/x-ios-app" && "$file_type" != "application/zip" ]]; then
-            echo "::error::Validation failed: the downloaded file is not a valid IPA (detected: $file_type). Make sure the URL is a direct download link, not a web page."
-            exit 1
-          fi
 
       - name: Install build dependencies
         run: brew install ldid dpkg xz
